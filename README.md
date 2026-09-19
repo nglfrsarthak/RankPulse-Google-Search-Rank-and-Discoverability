@@ -88,7 +88,7 @@ These metrics are stored in `models/model_metadata.json`.
 ```mermaid
 flowchart TD
     A[📥 Ingest Data] --> B[🔧 Feature Engineering]
-    B --> C[🤖 Model Training (Calibrated RF)]
+    B --> C[🤖 Model Training - Calibrated RF]
     C --> D[📊 Model Evaluation]
     D --> E[🚀 Deploy (FastAPI + UI)]
     E --> F[🔔 Alerts & Triage Queue]
