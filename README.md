@@ -90,7 +90,7 @@ flowchart TD
     A[📥 Ingest Data] --> B[🔧 Feature Engineering]
     B --> C[🤖 Model Training - Calibrated RF]
     C --> D[📊 Model Evaluation]
-    D --> E[🚀 Deploy (FastAPI + UI)]
+    D --> E[🚀 Deploy - FastAPI + UI]
     E --> F[🔔 Alerts & Triage Queue]
 ```
 
