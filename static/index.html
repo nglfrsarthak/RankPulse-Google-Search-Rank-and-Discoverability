@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RankPulse — Google Search Momentum &amp; Discoverability Engine</title>
+  <meta name="description" content="Production ML early-warning system and editorial triage platform for Google Search discoverability and momentum decay.">
+
+  <!-- Typography: JetBrains Mono (Headings/Data/Metrics) & Inter (UI/Text) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js for smooth time-series analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Design System Stylesheet -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand-group">
+        <div class="logo-mark">
+          <span class="dot dot-blue"></span>
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <div class="brand-titles">
+          <span class="brand-name">RankPulse</span>
+          <span class="brand-badge">SEARCH INTELLIGENCE</span>
+        </div>
+      </div>
+
+      <!-- Center Minimalist Tab Navigation -->
+      <nav class="nav-tabs" id="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-overview">Overview &amp; Mission</button>
+        <button class="nav-tab" data-tab="tab-queue">Triage Queue</button>
+        <button class="nav-tab" data-tab="tab-research">Model Audit</button>
+        <button class="nav-tab" data-tab="tab-ingestion">Data Connectors</button>
+        <button class="nav-tab" data-tab="tab-roadmap">Future Scope</button>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="nav-actions">
+        <div class="nav-status" id="nav-status">
+          <span class="pulse-indicator"></span>
+          <span id="nav-status-text" class="status-mono">Connecting...</span>
+        </div>
+        <a id="btn-export" href="/api/export" class="btn btn-primary btn-sm" download>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Export CSV
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-layout">
+
+    <!-- =========================================================================
+         TAB 1: OVERVIEW & MISSION (Commercial Value Proposition + High-Level KPIs)
+         ========================================================================= -->
+    <section id="tab-overview" class="tab-pane active">
+      
+      <!-- Commercial Hero Banner -->
+      <div class="hero-card">
+        <div class="hero-badge mono">DECISION INTELLIGENCE FOR ORGANIC SEARCH</div>
+        <h1 class="hero-title mono">The Early-Warning System for Google Search Discoverability</h1>
+        <p class="hero-subtitle">
+          Traditional analytics report traffic that was <em>already lost</em>. RankPulse continuously audits Google Search Console time-series to detect subtle momentum decay, position drift, and CTR erosion — surfacing a prioritized triage queue before the traffic cliff occurs.
+        </p>
+
+        <!-- Problem vs Solution Value Strip -->
+        <div class="value-grid">
+          <div class="value-card">
+            <span class="value-tag text-danger mono">01 / THE PROBLEM</span>
+            <h3 class="value-heading mono">The Silent Traffic Cliff</h3>
+            <p class="value-text">
+              80% of organic traffic comes from the top 20% of content. Content staleness and competitor gains erode ranking gradually over 30–60 days before total pageviews collapse. Reactive refreshes waste weeks of compounding revenue.
+            </p>
+          </div>
+          <div class="value-card">
+            <span class="value-tag text-blue mono">02 / THE GOAL</span>
+            <h3 class="value-heading mono">Predictive Triage Cockpit</h3>
+            <p class="value-text">
+              Shift editorial teams from guesswork to precision decision-support. Predict which pages will lose &gt;20% of momentum next half-month, explain <em>why</em> with diagnostic Reason Codes, and provide instant remediation playbooks.
+            </p>
+          </div>
+          <div class="value-card">
+            <span class="value-tag text-green mono">03 / QUANTIFIED ROI</span>
+            <h3 class="value-heading mono">Measured Impact</h3>
+            <p class="value-text">
+              Delivers a <strong>2.8x–3.8x Precision@K lift</strong> over hand-crafted rules, protecting high-impact search assets and saving 40+ hours per month of blind editorial revisions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Strip -->
+      <div class="kpi-grid" style="margin-top: 24px;">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">MONITORED PAGES</span>
+            <span class="kpi-icon icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value mono" id="kpi-monitored-pages">—</span>
+            <span class="kpi-subtext" id="kpi-total-impressions">— total imps (14d)</span>
+          </div>
+          <div class="kpi-footer"><span class="kpi-hint">Catalog with ≥100 impression guard</span></div>
+        </div>
+
+        <div class="kpi-card card-alert">
+          <div class="kpi-header">
+            <span class="kpi-label">PAGES AT RISK</span>
+            <span class="kpi-icon icon-red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value mono text-danger" id="kpi-at-risk-count">—</span>
+            <span class="kpi-pill pill-danger" id="kpi-risk-ratio">—%</span>
+          </div>
+          <div class="kpi-footer"><span class="kpi-hint">Predicted &gt;20% momentum drop</span></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">EST. TRAFFIC AT RISK</span>
+            <span class="kpi-icon icon-amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value mono text-amber" id="kpi-projected-loss">—</span>
+            <span class="kpi-subtext">projected loss</span>
+          </div>
+          <div class="kpi-footer"><span class="kpi-hint">Recoverable via timely editorial refresh</span></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">MODEL DISCRIMINATION</span>
+            <span class="kpi-icon icon-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value mono text-green" id="kpi-model-auc">—</span>
+            <span class="kpi-pill pill-success" id="kpi-model-status">Calibrated</span>
+          </div>
+          <div class="kpi-footer"><span class="kpi-hint">ROC-AUC lift over hand baseline</span></div>
+        </div>
+      </div>
+
+      <!-- Quick Action Callout -->
+      <div class="action-banner">
+        <div>
+          <h3 class="action-banner-title mono">Ready to triage high-priority pages?</h3>
+          <p class="action-banner-desc">Review diagnosed URLs, inspect historical position drift, or trigger an authentic data sync.</p>
+        </div>
+        <div class="action-banner-btns">
+          <button class="btn btn-primary" onclick="switchTab('tab-queue')">Open Triage Queue &rarr;</button>
+          <button class="btn btn-secondary" onclick="switchTab('tab-ingestion')">Configure Data Sources</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: EDITORIAL TRIAGE QUEUE (The Operational Cockpit)
+         ========================================================================= -->
+    <section id="tab-queue" class="tab-pane">
+      
+      <!-- Controls & Filter Ribbon -->
+      <section class="controls-card">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="filter-search" placeholder="Filter by URL or path slug..." autocomplete="off">
+          <button id="search-clear" class="btn-clear hidden">&times;</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-caption">RISK:</span>
+          <div class="segmented-pills" id="risk-filter-pills">
+            <button class="pill active" data-risk="ALL">All</button>
+            <button class="pill pill-crit" data-risk="CRITICAL">Critical</button>
+            <button class="pill pill-hi" data-risk="HIGH">High</button>
+            <button class="pill pill-mod" data-risk="MODERATE">Moderate</button>
+            <button class="pill pill-lo" data-risk="LOW">Low</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-caption">STATUS:</span>
+          <div class="segmented-pills" id="status-filter-pills">
+            <button class="pill active" data-status="ALL">All</button>
+            <button class="pill" data-status="PENDING">Pending</button>
+            <button class="pill" data-status="IN_REVIEW">In Review</button>
+            <button class="pill" data-status="REFRESHED">Refreshed</button>
+            <button class="pill" data-status="IGNORED">Ignored</button>
+          </div>
+        </div>
+
+        <div class="filter-group sort-group">
+          <label for="select-sort" class="filter-caption">SORT:</label>
+          <select id="select-sort" class="select-dropdown">
+            <option value="model_proba">Highest Risk First</option>
+            <option value="imp_p1">Highest Volume First</option>
+            <option value="avg_pos_p1">Position Slippage</option>
+            <option value="baseline_score">Baseline Score</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Triage Table Card -->
+      <section class="table-card">
+        <div class="table-header-strip">
+          <div class="table-title-group">
+            <h2 class="table-title mono">PRIORITIZED EDITORIAL TRIAGE QUEUE</h2>
+            <span class="table-badge" id="table-badge-count">Showing 0 pages</span>
+          </div>
+          <div class="table-tools">
+            <span class="tip-text">Click any row to open inspector drawer &amp; playbook</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="triage-table" id="triage-table">
+            <thead>
+              <tr>
+                <th style="width: 32%;">PAGE URL &amp; ACTION</th>
+                <th style="width: 14%;">DECAY RISK P(Y)</th>
+                <th style="width: 18%;">DIAGNOSTIC REASON</th>
+                <th style="width: 12%;">VOLUME (14D)</th>
+                <th style="width: 10%;">AVG POS</th>
+                <th style="width: 10%;">WORKFLOW</th>
+                <th style="width: 4%;"></th>
+              </tr>
+            </thead>
+            <tbody id="triage-table-body">
+              <tr>
+                <td colspan="7" class="empty-cell">
+                  <div class="loading-spinner"></div>
+                  <p>Loading ranked triage queue...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="table-pagination">
+          <span class="pagination-info" id="pagination-info">Page 1 of 1</span>
+          <div class="pagination-controls">
+            <button id="btn-prev-page" class="btn btn-sm" disabled>&larr; Previous</button>
+            <button id="btn-next-page" class="btn btn-sm" disabled>Next &rarr;</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: MODEL DISCRIMINATION & RESEARCH AUDIT
+         ========================================================================= -->
+    <section id="tab-research" class="tab-pane">
+      <div class="card-section">
+        <div class="section-badge mono">HONEST BENCHMARKING</div>
+        <h2 class="card-section-title mono">Calibrated Machine Learning vs. Heuristic Baseline</h2>
+        <p class="card-section-desc">
+          Evaluated on an identical stratified holdout split. Base rate is presented alongside every metric to prevent inflated reporting.
+        </p>
+
+        <!-- Metric Grid -->
+        <div class="metrics-summary-grid" style="margin: 20px 0;">
+          <div class="summary-metric">
+            <span class="s-label">ROC AUC</span>
+            <span class="s-val mono text-green" id="m-roc-auc">—</span>
+          </div>
+          <div class="summary-metric">
+            <span class="s-label">PR AUC</span>
+            <span class="s-val mono" id="m-pr-auc">—</span>
+          </div>
+          <div class="summary-metric">
+            <span class="s-label">Base Rate</span>
+            <span class="s-val mono" id="m-base-rate">—</span>
+          </div>
+          <div class="summary-metric">
+            <span class="s-label">Brier Score</span>
+            <span class="s-val mono" id="m-brier">—</span>
+          </div>
+        </div>
+
+        <!-- Precision@K Table -->
+        <h4 class="section-title mono" style="margin: 24px 0 10px;">PRECISION @ K AUDIT (DISCRIMINATION LIFT)</h4>
+        <div class="table-responsive">
+          <table class="triage-table">
+            <thead>
+              <tr>
+                <th>CUTOFF</th>
+                <th>HEURISTIC BASELINE RULE</th>
+                <th>CALIBRATED ML ENSEMBLE</th>
+                <th>LIFT OVER BASELINE</th>
+              </tr>
+            </thead>
+            <tbody id="m-precision-table">
+              <tr>
+                <td class="mono">Precision@10</td>
+                <td class="mono">0.300</td>
+                <td class="mono text-green">0.800</td>
+                <td class="mono text-green">2.67x</td>
+              </tr>
+              <tr>
+                <td class="mono">Precision@20</td>
+                <td class="mono">0.260</td>
+                <td class="mono text-green">0.750</td>
+                <td class="mono text-green">2.88x</td>
+              </tr>
+              <tr>
+                <td class="mono">Precision@50</td>
+                <td class="mono">0.240</td>
+                <td class="mono text-green">0.720</td>
+                <td class="mono text-green">3.00x</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Feature Importance Breakdown -->
+        <h4 class="section-title mono" style="margin: 28px 0 12px;">FEATURE IMPORTANCES (TEMPORAL PREDICTORS)</h4>
+        <div class="feature-bar-list" id="m-feature-list">
+          <!-- Populated via JS -->
+        </div>
+
+        <div style="margin-top: 24px; text-align: right;">
+          <button id="btn-retrain-model" class="btn btn-secondary">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Retrain Model
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: DATA CONNECTORS & GLOBAL INGESTION
+         ========================================================================= -->
+    <section id="tab-ingestion" class="tab-pane">
+      <div class="card-section">
+        <div class="section-badge mono">MULTI-MODAL INGESTION LAYER</div>
+        <h2 class="card-section-title mono">Connect Search Performance Streams</h2>
+        <p class="card-section-desc">
+          Choose from live authentic global web search data, Google Search Console API connectors, CSV exports, or the FlyRank research warehouse.
+        </p>
+
+        <div class="connectors-grid">
+          
+          <!-- Connector 1: Global Authentic Search Traffic -->
+          <div class="connector-card">
+            <div class="connector-header">
+              <span class="connector-icon icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </span>
+              <div>
+                <h4 class="connector-title mono">Authentic Global Search Traffic</h4>
+                <span class="connector-badge mono">LIVE REST API · MULTI-SECTOR</span>
+              </div>
+            </div>
+            <p class="connector-desc">
+              Stream live daily web traffic and discoverability metrics across millions of daily views. Choose from curated industry sectors, trending articles, or your own custom topics.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+              <label class="mono text-xs text-muted">SELECT SECTOR / SEED:</label>
+              <select id="global-category-select" class="form-input" style="padding: 6px 10px; font-size: 13px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px;">
+                <option value="all">All Sectors (60+ High-Traffic Topics)</option>
+                <option value="giants">Web & Tech Giants (Google, YouTube, Netflix, Nvidia, Tesla, OpenAI...)</option>
+                <option value="tech">AI, Cloud & Software (ChatGPT, Kubernetes, FastAPI, PyTorch...)</option>
+                <option value="finance">Global Finance & E-Commerce (Bitcoin, Shopify, Stock Market...)</option>
+                <option value="trending">Top Trending Worldwide (Dynamic Daily Top Views)</option>
+              </select>
+
+              <label class="mono text-xs text-muted" style="margin-top: 4px;">OR ENTER CUSTOM TOPICS (COMMA-SEPARATED):</label>
+              <input id="global-custom-topics" type="text" class="form-input" placeholder="e.g. Elon_Musk, Nvidia, Reddit, Spotify, Gemini" style="padding: 6px 10px; font-size: 13px; background: var(--surface-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px;">
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button id="btn-ingest-global" class="btn btn-primary btn-sm">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Stream Category
+              </button>
+              <button id="btn-ingest-custom" class="btn btn-secondary btn-sm">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Ingest Custom Topics
+              </button>
+            </div>
+          </div>
+
+          <!-- Connector 2: Google Search Console API -->
+          <div class="connector-card">
+            <div class="connector-header">
+              <span class="connector-icon icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </span>
+              <div>
+                <h4 class="connector-title mono">Google Search Console API</h4>
+                <span class="connector-badge mono">OAUTH2 / SERVICE ACCOUNT</span>
+              </div>
+            </div>
+            <p class="connector-desc">
+              Automated daily query from Google Search Console API v1 for domains you own. Set <code>GOOGLE_APPLICATION_CREDENTIALS</code> and <code>GSC_SITE_URL</code> to activate background sync.
+            </p>
+            <div class="code-pill mono">python -m rankpulse.ingestion.gsc_client</div>
+          </div>
+
+          <!-- Connector 3: Universal CSV Uploader -->
+          <div class="connector-card">
+            <div class="connector-header">
+              <span class="connector-icon icon-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              </span>
+              <div>
+                <h4 class="connector-title mono">Universal CSV Ingestion</h4>
+                <span class="connector-badge mono">DRAG &amp; DROP GSC EXPORT</span>
+              </div>
+            </div>
+            <p class="connector-desc">
+              Upload any GSC UI export, BigQuery GSC bulk dump, or custom CSV containing daily impressions, clicks, CTR, and average position.
+            </p>
+            <button id="btn-open-upload-modal" class="btn btn-secondary btn-sm">Upload GSC CSV</button>
+          </div>
+
+          <!-- Connector 4: FlyRank Pseudonymized Warehouse -->
+          <div class="connector-card">
+            <div class="connector-header">
+              <span class="connector-icon icon-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              </span>
+              <div>
+                <h4 class="connector-title mono">FlyRank Warehouse Release</h4>
+                <span class="connector-badge mono">HUGGING FACE · ~79M FACTS</span>
+              </div>
+            </div>
+            <p class="connector-desc">
+              Connect to <code>FlyRank/internship-warehouse</code> via DuckDB parquet streaming using your Hugging Face read access token.
+            </p>
+            <div style="display: flex; gap: 8px;">
+              <input type="password" id="hf-token-input" placeholder="hf_..." class="select-dropdown" style="flex: 1;">
+              <button id="btn-stream-hf" class="btn btn-secondary btn-sm">Stream</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: FUTURE SCOPE & COMMERCIAL ROADMAP
+         ========================================================================= -->
+    <section id="tab-roadmap" class="tab-pane">
+      <div class="card-section">
+        <div class="section-badge mono">EXPANSION &amp; SCALE</div>
+        <h2 class="card-section-title mono">Commercial Product Roadmap &amp; Future Scope</h2>
+        <p class="card-section-desc">
+          Strategic high-impact capabilities designed to take RankPulse from an internal decision-support tool to a full-scale Enterprise SaaS platform.
+        </p>
+
+        <div class="roadmap-grid">
+          
+          <div class="roadmap-card">
+            <div class="roadmap-number mono">01</div>
+            <h4 class="roadmap-title mono">AI Content Auto-Remediation</h4>
+            <p class="roadmap-desc">
+              Direct integration with Gemini / LLMs to automatically crawl current Page 1 SERP competitors, identify missing topical entities, and draft updated title tags, meta snippets, and FAQ sections directly into CMS drafts.
+            </p>
+            <span class="roadmap-tag mono">GenAI Workflow</span>
+          </div>
+
+          <div class="roadmap-card">
+            <div class="roadmap-number mono">02</div>
+            <h4 class="roadmap-title mono">Real-Time Slack / Teams Alerting</h4>
+            <p class="roadmap-desc">
+              Event-driven webhooks alerting growth leads when flagship pillar pages slip &gt;2.5 spots or experience an acute &gt;30% CTR collapse within any 3-day rolling window.
+            </p>
+            <span class="roadmap-tag mono">Incident Response</span>
+          </div>
+
+          <div class="roadmap-card">
+            <div class="roadmap-number mono">03</div>
+            <h4 class="roadmap-title mono">Google Core Update Impact Correlator</h4>
+            <p class="roadmap-desc">
+              Overlaying confirmed Google algorithm rollout dates onto time-series trajectories to separate site-wide algorithmic volatility from page-specific content staleness.
+            </p>
+            <span class="roadmap-tag mono">Algorithmic Auditing</span>
+          </div>
+
+          <div class="roadmap-card">
+            <div class="roadmap-number mono">04</div>
+            <h4 class="roadmap-title mono">Query Cannibalization Cluster Detector</h4>
+            <p class="roadmap-desc">
+              Graph-based query clustering to detect when multiple internal URLs begin splitting impressions for the exact same intent, leading to self-inflicted ranking degradation.
+            </p>
+            <span class="roadmap-tag mono">Information Retrieval</span>
+          </div>
+
+          <div class="roadmap-card">
+            <div class="roadmap-number mono">05</div>
+            <h4 class="roadmap-title mono">Multi-Tenant Agency Workspace</h4>
+            <p class="roadmap-desc">
+              Role-based access control (RBAC), multi-domain portfolios, white-labeled client PDF reports, and direct integrations with WordPress, Webflow, and Shopify.
+            </p>
+            <span class="roadmap-tag mono">SaaS Architecture</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Slide-Over Inspector Drawer (Unchanged structure, accessible across all tabs) -->
+  <aside id="inspector-drawer" class="inspector-drawer hidden">
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <span class="drawer-label mono">PAGE DRILLDOWN &amp; REMEDIATION</span>
+          <h3 class="drawer-page-title mono" id="drawer-page-url">https://example.com/page</h3>
+        </div>
+        <button id="drawer-close" class="btn-close">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-banner" id="drawer-banner">
+          <div class="banner-top">
+            <span class="kpi-pill" id="drawer-risk-pill">CRITICAL RISK</span>
+            <span class="drawer-proba mono" id="drawer-proba-text">P(Decline) = 84%</span>
+          </div>
+          <h4 class="drawer-reason-title mono" id="drawer-reason-title">Rank Slippage into Second Tier</h4>
+          <p class="drawer-reason-desc" id="drawer-reason-desc">Average position has drifted downward into positions 10-25.</p>
+        </div>
+
+        <div class="drawer-metrics-grid">
+          <div class="drawer-metric-box"><span class="d-label">14d Impressions</span><span class="d-val mono" id="d-imp">—</span></div>
+          <div class="drawer-metric-box"><span class="d-label">14d Clicks</span><span class="d-val mono" id="d-clk">—</span></div>
+          <div class="drawer-metric-box"><span class="d-label">Avg Position</span><span class="d-val mono" id="d-pos">—</span></div>
+          <div class="drawer-metric-box"><span class="d-label">14d CTR</span><span class="d-val mono" id="d-ctr">—</span></div>
+          <div class="drawer-metric-box"><span class="d-label">Momentum Ratio</span><span class="d-val mono" id="d-momentum">—</span></div>
+          <div class="drawer-metric-box"><span class="d-label">Baseline Score</span><span class="d-val mono" id="d-baseline">—</span></div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="section-title-row">
+            <h5 class="section-title mono">TRAFFIC &amp; RANK TRAJECTORY (DAILY)</h5>
+            <span class="chart-legend-hint">Left: Impressions · Right: Avg Pos (inverted)</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="page-history-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="drawer-section playbook-section">
+          <div class="section-title-row">
+            <h5 class="section-title mono">ACTION PLAYBOOK &amp; CHECKLIST</h5>
+            <span class="time-estimate-badge mono" id="d-time-estimate">Est. 45 mins</span>
+          </div>
+          <p class="playbook-primary-action" id="d-primary-action">Comprehensive Content &amp; Search Intent Refresh</p>
+          <ul class="checklist" id="d-checklist"></ul>
+          
+          <div class="guardrail-box">
+            <span class="guardrail-title">WHAT WOULD MAKE THIS WRONG?</span>
+            <p class="guardrail-text" id="d-guardrail">Temporary ranking fluctuation due to an active core algorithm update.</p>
+          </div>
+        </div>
+
+        <div class="drawer-section workflow-section">
+          <h5 class="section-title mono">EDITORIAL WORKFLOW STATE</h5>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="d-status-select">Status:</label>
+              <select id="d-status-select" class="select-dropdown">
+                <option value="PENDING">Pending Triage</option>
+                <option value="IN_REVIEW">In Review</option>
+                <option value="REFRESHED">Refreshed &amp; Updated</option>
+                <option value="IGNORED">Dismissed / Ignored</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="d-assignee-input">Assignee:</label>
+              <input type="text" id="d-assignee-input" placeholder="e.g. Sarah / SEO Team">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="d-notes-input">Editorial Notes &amp; Planned Changes:</label>
+            <textarea id="d-notes-input" rows="3" placeholder="Add notes on competitor audits, target keywords to reinforce..."></textarea>
+          </div>
+          <button id="btn-save-triage" class="btn btn-primary" style="width: 100%;">Save Workflow State</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Upload Modal -->
+  <div id="upload-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title mono">IMPORT GOOGLE SEARCH CONSOLE CSV</h3>
+        <button id="modal-upload-close" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Upload any Google Search Console performance export. Supports standard GSC UI exports, BigQuery GSC bulk dumps, or custom daily exports containing: 
+          <code>report_date, page_url, impressions, clicks, ctr, avg_position</code>.
+        </p>
+        <div class="drop-zone" id="drop-zone">
+          <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span class="drop-label">Drag &amp; drop your GSC CSV file here, or browse</span>
+          <input type="file" id="file-input" accept=".csv" class="file-hidden">
+        </div>
+        <div id="upload-progress" class="upload-progress hidden">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+          <span id="upload-status-text" class="status-mono">Ingesting and processing records...</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="btn-submit-upload" class="btn btn-primary" disabled>Ingest File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Application Logic -->
+  <script src="/app.js"></script>
+</body>
+</html>

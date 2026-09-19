@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+
+# IDE / editor folders
+.vscode/
+.idea/
+
+# Data / model artifacts (store locally, not in repo)
+models/*.joblib
+models/model_metadata.json
+rankpulse.db
+
+# Logs
+*.log
